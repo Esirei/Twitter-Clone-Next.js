@@ -25,14 +25,16 @@ const CreateTweet = () => {
   }
 
   const addEmojiToTweet = (emoji: BaseEmoji) => {
-    const codePoints = emoji.unified.split('-').reduce<string[]>((acc, code) => {
-      acc.push(`0x${code}`)
-      return acc
-    }, [])
+    // const codePoints = emoji.unified.split('-').reduce<string[]>((acc, code) => {
+    //   acc.push(`0x${code}`)
+    //   return acc
+    // }, [])
+    //
+    // // @ts-ignore
+    // const emojiString = String.fromCodePoint(...codePoints)
+    // setTweet(tweet + emojiString)
 
-    // @ts-ignore
-    const emojiString = String.fromCodePoint(...codePoints)
-    setTweet(tweet + emojiString)
+    setTweet(tweet + emoji.native)
   }
 
   const postTweet = () => {
