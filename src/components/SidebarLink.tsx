@@ -1,8 +1,8 @@
-import { ComponentType, FC } from 'react'
+import { ComponentProps, ComponentType, FC } from 'react'
 
 interface Props {
   text: string
-  Icon: ComponentType<any>
+  Icon: ComponentType<ComponentProps<'svg'>>
   active?: boolean
 }
 
