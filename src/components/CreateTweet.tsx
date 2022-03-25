@@ -96,7 +96,13 @@ const CreateTweet = () => {
           <div className="flex items-center text-[#1D9BF0]">
             <button className="tweet-icon" onClick={() => fileInputRef.current?.click()}>
               <PhotographIcon className="h-[22px]" />
-              <input type="file" hidden ref={fileInputRef} onChange={addFileToTweet} />
+              <input
+                type="file"
+                hidden
+                ref={fileInputRef}
+                onChange={addFileToTweet}
+                accept="image/*"
+              />
             </button>
 
             <button className="tweet-icon rotate-90">
