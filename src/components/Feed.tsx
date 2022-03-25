@@ -1,5 +1,6 @@
 import { SparklesIcon } from '@heroicons/react/outline'
 import React from 'react'
+import CreateTweet from './CreateTweet'
 
 const Feed = () => {
   return (
@@ -10,6 +11,8 @@ const Feed = () => {
           <SparklesIcon className="h-5 w-5" />
         </div>
       </div>
+
+      <CreateTweet />
     </div>
   )
 }
