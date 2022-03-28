@@ -1,4 +1,12 @@
 import {
+  addDoc,
+  collection,
+  CollectionReference,
+  serverTimestamp,
+  updateDoc,
+} from '@firebase/firestore'
+import { getDownloadURL, ref, StringFormat, uploadString } from '@firebase/storage'
+import {
   CalendarIcon,
   ChartBarIcon,
   EmojiHappyIcon,
@@ -8,11 +16,14 @@ import { XIcon } from '@heroicons/react/solid'
 import { BaseEmoji, Picker } from 'emoji-mart'
 import 'emoji-mart/css/emoji-mart.css'
 import { ChangeEvent, useRef, useState } from 'react'
+import { firestore, storage } from '~/firebase'
+import Tweet from '~/types/models/Tweet'
 
 const CreateTweet = () => {
   const [text, setText] = useState('')
   const [file, setFile] = useState<string | null>()
   const [showEmojiModal, setShowEmojiModal] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -37,8 +48,31 @@ const CreateTweet = () => {
     setText(text + emoji.native)
   }
 
-  const postTweet = () => {
-    console.log('Posting tweet...')
+  const postTweet = async () => {
+    if (loading) return
+    setLoading(true)
+
+    // Post tweet
+    const tweetRef = await addDoc<Tweet>(
+      collection(firestore, 'tweets') as CollectionReference<Tweet>,
+      {
+        text,
+        timestamp: serverTimestamp(),
+      },
+    )
+
+    if (file) {
+      const name = Math.random().toString(36).substring(2, 10) // Generate file name
+      const imageRef = ref(storage, `tweets/${tweetRef.id}/${name}`) // Create ref to image path
+      await uploadString(imageRef, file, StringFormat.DATA_URL) // Upload image
+      const image = await getDownloadURL(imageRef) // Get image url
+      await updateDoc(tweetRef, { image }) // Update tweet with image url
+    }
+
+    setText('')
+    setFile('')
+    setLoading(false)
+    setShowEmojiModal(false)
   }
 
   const renderEmojiModal = () => {
@@ -74,7 +108,10 @@ const CreateTweet = () => {
   }
 
   return (
-    <div className="flex space-x-3 overflow-y-scroll border-b border-gray-700 p-3">
+    <div
+      className={`flex space-x-3 overflow-y-scroll border-b border-gray-700 p-3 ${
+        loading ? 'opacity-60' : ''
+      }`}>
       <img
         src="https://lh3.googleusercontent.com/ogw/ADea4I5fb1DvkBz1-Ig4DTuqSEsyzMK6C0haJu38BXR7Hw=s32-c-mo"
         alt="Esirei"
@@ -92,41 +129,43 @@ const CreateTweet = () => {
           {renderSelectedFile()}
         </div>
 
-        <div className="flex items-center justify-between pt-2.5">
-          <div className="flex items-center text-[#1D9BF0]">
-            <button className="tweet-icon" onClick={() => fileInputRef.current?.click()}>
-              <PhotographIcon className="h-[22px]" />
-              <input
-                type="file"
-                hidden
-                ref={fileInputRef}
-                onChange={addFileToTweet}
-                accept="image/*"
-              />
-            </button>
+        {!loading && (
+          <div className="flex items-center justify-between pt-2.5">
+            <div className="flex items-center text-[#1D9BF0]">
+              <button className="tweet-icon" onClick={() => fileInputRef.current?.click()}>
+                <PhotographIcon className="h-[22px]" />
+                <input
+                  type="file"
+                  hidden
+                  ref={fileInputRef}
+                  onChange={addFileToTweet}
+                  accept="image/*"
+                />
+              </button>
 
-            <button className="tweet-icon rotate-90">
-              <ChartBarIcon className="h-[22px]" />
-            </button>
+              <button className="tweet-icon rotate-90">
+                <ChartBarIcon className="h-[22px]" />
+              </button>
 
-            <button className="tweet-icon" onClick={() => setShowEmojiModal(!showEmojiModal)}>
-              <EmojiHappyIcon className="h-[22px]" />
-            </button>
+              <button className="tweet-icon" onClick={() => setShowEmojiModal(!showEmojiModal)}>
+                <EmojiHappyIcon className="h-[22px]" />
+              </button>
 
-            <button className="tweet-icon">
-              <CalendarIcon className="h-[22px]" />
-            </button>
+              <button className="tweet-icon">
+                <CalendarIcon className="h-[22px]" />
+              </button>
 
-            {renderEmojiModal()}
+              {renderEmojiModal()}
+            </div>
+            <button
+              disabled={!text.trim() && !file}
+              onClick={postTweet}
+              className="rounded-full bg-[#1D9BF0] px-4 py-1.5 font-bold text-white shadow-md
+              hover:bg-[#1A8CD8] disabled:cursor-default disabled:opacity-50 disabled:hover:bg-[#1D9BF0]">
+              Tweet
+            </button>
           </div>
-          <button
-            disabled={!text.trim() && !file}
-            onClick={postTweet}
-            className="rounded-full bg-[#1D9BF0] px-4 py-1.5 font-bold text-white shadow-md
-            hover:bg-[#1A8CD8] disabled:cursor-default disabled:opacity-50 disabled:hover:bg-[#1D9BF0]">
-            Tweet
-          </button>
-        </div>
+        )}
       </div>
     </div>
   )
