@@ -15,11 +15,13 @@ import {
 import { XIcon } from '@heroicons/react/solid'
 import { BaseEmoji, Picker } from 'emoji-mart'
 import 'emoji-mart/css/emoji-mart.css'
+import { useSession } from 'next-auth/react'
 import { ChangeEvent, useRef, useState } from 'react'
 import { firestore, storage } from '~/firebase'
 import Tweet from '~/types/models/Tweet'
 
 const CreateTweet = () => {
+  const { data: session } = useSession()
   const [text, setText] = useState('')
   const [file, setFile] = useState<string | null>()
   const [showEmojiModal, setShowEmojiModal] = useState(false)
@@ -113,8 +115,8 @@ const CreateTweet = () => {
         loading ? 'opacity-60' : ''
       }`}>
       <img
-        src="https://lh3.googleusercontent.com/ogw/ADea4I5fb1DvkBz1-Ig4DTuqSEsyzMK6C0haJu38BXR7Hw=s32-c-mo"
-        alt="Esirei"
+        src={session?.user.image!}
+        alt={session?.user.name!}
         className="h-11 w-11 cursor-pointer rounded-full"
       />
       <div className="w-full divide-y divide-gray-700">
