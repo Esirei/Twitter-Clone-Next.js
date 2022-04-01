@@ -115,8 +115,8 @@ const CreateTweet = () => {
         loading ? 'opacity-60' : ''
       }`}>
       <img
-        src={session?.user.image!}
-        alt={session?.user.name!}
+        src={session?.user.image}
+        alt={session?.user.name}
         className="h-11 w-11 cursor-pointer rounded-full"
       />
       <div className="w-full divide-y divide-gray-700">

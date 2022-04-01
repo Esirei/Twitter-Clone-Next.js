@@ -21,7 +21,7 @@ export default NextAuth({
     session: async ({ session, token, user }) => {
       console.log('session', { session, token, user })
       session.user.id = token.sub!
-      session.user.tag = session.user.name!.split(' ').join('').toLocaleLowerCase()
+      session.user.tag = session.user.name.split(' ').join('').toLocaleLowerCase()
       return session
     },
   },

@@ -39,8 +39,8 @@ const Sidebar = () => {
           onClick={() => void signOut()}
           className="hover-animation mt-auto flex items-center justify-center text-[#D9D9D9] xl:ml-auto xl:-mr-5">
           <img
-            src={session.user.image!}
-            alt={session.user.name!}
+            src={session.user.image}
+            alt={session.user.name}
             className="h-10 w-10 rounded-full xl:mr-2.5"
           />
           <div className="hidden leading-5 xl:inline">
