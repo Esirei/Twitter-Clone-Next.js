@@ -59,6 +59,7 @@ const CreateTweet = () => {
       collection(firestore, 'tweets') as CollectionReference<Tweet>,
       {
         text,
+        userId: session!.user.id,
         timestamp: serverTimestamp(),
       },
     )
