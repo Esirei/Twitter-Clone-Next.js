@@ -13,6 +13,7 @@ import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { FC, MouseEventHandler } from 'react'
+import ReactTimeAgo from 'react-time-ago'
 import { firestore } from '~/firebase'
 import { c } from '~/helpers'
 import Tweet from '~/types/models/Tweet'
@@ -104,7 +105,9 @@ const Tweet: FC<Props> = ({ tweet, isPage }) => {
               </span>
             </div>
             &nbsp;&middot;&nbsp;
-            <span className="text-sm hover:underline sm:text-[15px]">{/* TimeAgo */}</span>
+            <span className="text-sm hover:underline sm:text-[15px]">
+              <ReactTimeAgo date={tweet.timestamp.toDate()} timeStyle="twitter" />
+            </span>
             {!isPage && renderTweetText()}
           </div>
           <div className="tweet-icon group ml-auto shrink-0">
