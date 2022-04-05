@@ -16,6 +16,7 @@ import { XIcon } from '@heroicons/react/solid'
 import { BaseEmoji, Picker } from 'emoji-mart'
 import 'emoji-mart/css/emoji-mart.css'
 import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 import { ChangeEvent, useRef, useState } from 'react'
 import { firestore, storage } from '~/firebase'
 import Tweet from '~/types/models/Tweet'
@@ -51,15 +52,15 @@ const CreateTweet = () => {
   }
 
   const postTweet = async () => {
-    if (loading) return
+    if (loading || !session?.user) return
     setLoading(true)
 
     // Post tweet
-    const tweetRef = await addDoc<Tweet>(
-      collection(firestore, 'tweets') as CollectionReference<Tweet>,
+    const tweetRef = await addDoc<Omit<Tweet, 'id'>>(
+      collection(firestore, 'tweets') as CollectionReference<Omit<Tweet, 'id'>>,
       {
         text,
-        userId: session!.user.id,
+        userId: session.user.id,
         timestamp: serverTimestamp(),
       },
     )
@@ -102,10 +103,18 @@ const CreateTweet = () => {
         <button
           type="button"
           onClick={() => setFile(null)}
-          className="absolute top-1 left-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-[#15181C]/75 hover:bg-[#272C26]">
+          className="absolute top-1 left-1 z-50 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-[#15181C]/75 hover:bg-[#272C26]">
           <XIcon className="h-5 text-white" />
         </button>
-        <img src={file} alt="Selected File" className="max-h-80 rounded-2xl object-contain" />
+        <div className="h-80 w-full">
+          <Image
+            src={file}
+            alt="Selected File"
+            layout="fill"
+            objectFit="cover"
+            className="rounded-2xl"
+          />
+        </div>
       </div>
     )
   }
