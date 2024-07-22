@@ -67,7 +67,6 @@ const Tweet: FC<Props> = ({ tweet, isPage }) => {
 
   const deleteTweet: MouseEventHandler<HTMLButtonElement> = e => {
     e.stopPropagation()
-    return
     void deleteDoc(doc(firestore, 'tweets', tweet.id))
     void router.push('/')
   }
@@ -76,7 +75,6 @@ const Tweet: FC<Props> = ({ tweet, isPage }) => {
 
   const likeTweet: MouseEventHandler<HTMLButtonElement> = e => {
     e.stopPropagation()
-    return
     void updateDoc(doc(firestore, 'tweets', tweet.id), {
       // likes: c.uniq([...tweet.likes, session.user.id]),
     })
